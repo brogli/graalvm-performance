@@ -1,4 +1,4 @@
-package ch.brogli.graalvm_performance;
+package ch.brogli.graalvmperformance;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

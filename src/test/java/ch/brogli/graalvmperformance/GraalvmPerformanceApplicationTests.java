@@ -1,4 +1,4 @@
-package ch.brogli.graalvm_performance;
+package ch.brogli.graalvmperformance;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

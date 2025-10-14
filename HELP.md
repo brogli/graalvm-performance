@@ -1,7 +1,7 @@
 # Read Me First
 The following was discovered as part of building this project:
 
-* The original package name 'ch.brogli.graalvm-performance' is invalid and this project uses 'ch.brogli.graalvm_performance' instead.
+* The original package name 'ch.brogli.graalvm-performance' is invalid and this project uses 'ch.brogli.graalvmperformance' instead.
 
 # Getting Started
 

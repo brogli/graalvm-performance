@@ -1,1 +1,5 @@
 rootProject.name = 'graalvm-performance'
+
+include 'shared'
+include 'sender'
+include 'receiver'

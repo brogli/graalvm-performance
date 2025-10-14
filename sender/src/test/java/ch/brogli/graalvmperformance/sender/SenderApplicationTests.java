@@ -1,10 +1,10 @@
-package ch.brogli.graalvmperformance;
+package ch.brogli.graalvmperformance.sender;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class GraalvmPerformanceApplicationTests {
+class SenderApplicationTests {
 
 	@Test
 	void contextLoads() {

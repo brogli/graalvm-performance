@@ -1,13 +1,13 @@
-package ch.brogli.graalvmperformance;
+package ch.brogli.graalvmperformance.sender;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class GraalvmPerformanceApplication {
+public class SenderApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(GraalvmPerformanceApplication.class, args);
+		SpringApplication.run(SenderApplication.class, args);
 	}
 
 }

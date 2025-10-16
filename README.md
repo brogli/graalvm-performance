@@ -1,10 +1,15 @@
 ## Build Containers
 
-- ./gradlew :sender:jib - Build and push sender image
-- ./gradlew :receiver:jib - Build and push receiver image
-- ./gradlew :sender:jibDockerBuild - Build sender to local Docker
-- ./gradlew :receiver:jibDockerBuild - Build receiver to local Docker
-
+```bash
+# Build and push sender image
+./gradlew :sender:jib
+# Build and push receiver image
+./gradlew :receiver:jib
+# Build sender to local Docker
+./gradlew :sender:jibDockerBuild
+# Build receiver to local Docker
+./gradlew :receiver:jibDockerBuild
+```
 
 ## Run pods
 
@@ -12,7 +17,7 @@
 podman play kube .k8s/receiver.yaml
 podman play kube .k8s/sender.yaml
 ```
-F
+
 ## Check pods
 
 ```bash

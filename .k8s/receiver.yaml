@@ -9,8 +9,8 @@ spec:
     - name: receiver
       image: localhost/graalvm-performance/receiver:latest
       ports:
-        - containerPort: 8080
-          hostPort: 8080
+        - containerPort: 8082
+          hostPort: 8082
       resources:
         limits:
           memory: "768Mi"
@@ -18,4 +18,4 @@ spec:
           memory: "512Mi"
       env:
         - name: SERVER_PORT
-          value: "8080"
+          value: "8082"

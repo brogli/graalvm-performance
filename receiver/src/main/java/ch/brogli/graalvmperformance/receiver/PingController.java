@@ -3,13 +3,24 @@ package ch.brogli.graalvmperformance.receiver;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Random;
-
 @RestController
 public class PingController {
 
+    private final PingService pingService;
+
+    public PingController(PingService pingService) {
+
+        this.pingService = pingService;
+    }
+
     @GetMapping("/ping")
     public int ping() {
-        return new Random().nextInt(1000);
+        return pingService.getPing();
+
+    }
+
+    @GetMapping("/threadname")
+    public String getThreadName() {
+        return Thread.currentThread().toString();
     }
 }

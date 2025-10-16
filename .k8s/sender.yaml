@@ -20,4 +20,4 @@ spec:
         - name: SERVER_PORT
           value: "8081"
         - name: RECEIVER_URL
-          value: "http://receiver-service:8080"
+          value: "http://localhost:8082"

@@ -14,7 +14,7 @@ public class RequestSender {
         this.pingClient = pingClient;
     }
 
-    @Scheduled(fixedRate = 10)
+    @Scheduled(fixedRate = 100)
     public void send() {
         var t = Thread.currentThread();
         log.info("tick on {} (id={}, virtual={})", t.getName(), t.threadId(), t.isVirtual());

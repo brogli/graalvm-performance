@@ -2,25 +2,33 @@
 import Chart from 'primevue/chart';
 
 
-import { ref, onMounted } from "vue";
+import {ref, onMounted, onUnmounted, computed} from "vue";
 
 onMounted(() => {
   chartData.value = setChartData();
   chartOptions.value = setChartOptions();
+  intervalId = setInterval(fetchData, 1000);
 });
+
+let intervalId: number | null = null;
 
 const chartData = ref();
 const chartOptions = ref();
+const requestsPerSecondData = ref<number[]>([]);
+const labels = ref<string[]>([]);
+
+// TODO: poll metrics (e.g. req per second), start stop form with req/s as param
 
 const setChartData = () => {
   const documentStyle = getComputedStyle(document.documentElement);
 
+
   return {
-    labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+    labels: labels,
     datasets: [
       {
         label: 'First Dataset',
-        data: [65, 59, 80, 81, 56, 55, 40],
+        data: requestsPerSecondData,
         fill: false,
         borderColor: documentStyle.getPropertyValue('--p-cyan-500'),
         tension: 0.4
@@ -71,6 +79,39 @@ const setChartOptions = () => {
     }
   };
 }
+
+async function fetchData(): Promise<void> {
+  const url = "http://localhost:8082/actuator/metrics/api_requests_per_second";
+  try {
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error(`Response status: ${response.status}`);
+    }
+
+    const result = await response.json();
+    const resultValue = result.measurements[0].value;
+    const newData = [...requestsPerSecondData.value, resultValue];
+    if (newData.length > 20) {
+      newData.shift();
+    }
+
+    // Update labels reactively
+    labels.value = newData.map((_, index, arr) => {
+      const secondsAgo = arr.length - 1 - index;
+      return secondsAgo === 0 ? 'now' : `-${secondsAgo}s`;
+    });
+    requestsPerSecondData.value = newData;
+
+  } catch (error) {
+    console.error('Error fetching data:', error instanceof Error ? error.message : 'Unknown error');
+  }
+}
+
+onUnmounted(() => {
+  if (intervalId) {
+    clearInterval(intervalId);
+  }
+});
 
 </script>
 

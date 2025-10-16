@@ -11,6 +11,8 @@ server:
 management:
   endpoints:
     web:
+      cors:
+        allowed-origins: "*"
       exposure:
         include: "health,info,prometheus,metrics"
 

@@ -45,7 +45,11 @@ jib {
         tags = [project.version, 'latest']
     }
     container {
-        jvmFlags = ['-Xms256m', '-Xmx512m']
+        // graalvm: remove jvmFlags
+        jvmFlags = [
+                '-XX:MaxRAMPercentage=75.0',  // Use 75% of container memory for heap
+                '-XX:InitialRAMPercentage=50.0'  // Initial heap as % of container memory
+        ]
         ports = [project.name == 'sender' ? '8081' : '8082']
         creationTime = 'USE_CURRENT_TIMESTAMP'
     }

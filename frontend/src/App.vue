@@ -2,8 +2,9 @@
 import LineChart from "@/LineChart.vue";
 import Button from 'primevue/button';
 import {ref} from "vue";
+import InputText from 'primevue/inputtext';
 
-const shouldUpdateMetrics = ref<boolean>(false);
+const fixedRateMs = ref<string>("100");
 
 async function startSending(): Promise<void> {
   const url = "http://localhost:8081/start";
@@ -13,7 +14,7 @@ async function startSending(): Promise<void> {
     headers: {
       "Content-Type": "application/json"
     },
-    body: JSON.stringify({ intervalMs: 100 }),
+    body: JSON.stringify({ intervalMs: parseInt(fixedRateMs.value) }),
   }
 
   try {
@@ -50,13 +51,13 @@ async function stopSending(): Promise<void> {
 <template>
 <main class="flex flex-col">
   <section class="flex gap-4">
+    <InputText type="text" v-model="fixedRateMs" />
     <Button label="Start Requests" @click="startSending" />
     <Button label="Stop Requests" @click="stopSending" ></Button>
-    <Button label="Stop Updating Metrics" @click="shouldUpdateMetrics = false" ></Button>
-    <Button label="Start Updating Metrics" @click="shouldUpdateMetrics = true" ></Button>
+
 
   </section>
-  <LineChart :should-update-metrics="shouldUpdateMetrics"/>
+  <LineChart/>
 </main>
 </template>
 

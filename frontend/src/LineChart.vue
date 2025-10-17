@@ -1,50 +1,30 @@
 <script setup lang="ts">
 
 import Chart from "primevue/chart";
-import {ref, onMounted, onUnmounted, computed, type Ref, watch} from "vue";
-import { useIntervalFn } from '@vueuse/core'
+import {onMounted, onUnmounted, ref} from "vue";
+import {useIntervalFn} from '@vueuse/core'
+import Button from "primevue/button";
 
-const props = defineProps<{
-  shouldUpdateMetrics: boolean
-}>()
 
 onMounted(() => {
   chartData.value = setChartData();
   chartOptions.value = setChartOptions();
-  if (!props.shouldUpdateMetrics) {
-    pause();
-  }
+  pause();
 });
 
-watch(() => props.shouldUpdateMetrics, (shouldUpdate) => {
-  if (shouldUpdate) {
-    resume()
-  } else {
-    pause()
-  }
-})
 
-const { pause, resume, isActive } = useIntervalFn(() => {
+const {pause, resume, isActive} = useIntervalFn(() => {
   fetchData()
 }, 1000)
 
-function startUpdatingMetrics() {
-  if (!isActive) {
-    resume()
-  }
-}
-
 
 function stopUpdatingMetrics(): void {
-  if (intervalId) {
-    clearInterval(intervalId);
-  }
+
   if (isActive) {
     pause();
   }
 }
 
-let intervalId: number | null = null;
 
 const chartData = ref();
 const chartOptions = ref();
@@ -148,9 +128,13 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="card">
+  <section class="card">
     <Chart type="line" :data="chartData" :options="chartOptions" class="h-[30rem]"/>
-  </div>
+    <div class="gap-4 flex">
+      <Button label="Stop Updating Metrics" @click="pause()" ></Button>
+      <Button label="Start Updating Metrics" @click="resume()" ></Button>
+    </div>
+  </section>
 </template>
 
 <style scoped>

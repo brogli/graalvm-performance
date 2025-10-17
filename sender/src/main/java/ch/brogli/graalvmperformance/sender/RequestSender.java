@@ -40,7 +40,7 @@ public class RequestSender {
 
     public void sendRequest() {
         var t = Thread.currentThread();
-        log.info("tick on {} (id={}, virtual={})", t.getName(), t.threadId(), t.isVirtual());
+        log.debug("tick on {} (id={}, virtual={})", t.getName(), t.threadId(), t.isVirtual());
 
 
         try {

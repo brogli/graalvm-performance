@@ -1,21 +1,44 @@
 package ch.brogli.graalvmperformance.sender;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.scheduling.TaskScheduler;
 import org.springframework.stereotype.Service;
+
+import java.time.Duration;
+import java.util.concurrent.ScheduledFuture;
 
 @Service
 @Slf4j
 public class RequestSender {
 
     private final PingClient pingClient;
+    private final TaskScheduler taskScheduler;
+    private ScheduledFuture<?> scheduledTask;
 
-    public RequestSender(PingClient pingClient) {
+    public RequestSender(PingClient pingClient, TaskScheduler taskScheduler) {
         this.pingClient = pingClient;
+        this.taskScheduler = taskScheduler;
+
     }
 
-    @Scheduled(fixedRate = 100)
-    public void send() {
+    public void startSending(int intervalMs) {
+        if (scheduledTask == null || scheduledTask.isCancelled()) {
+            log.info("start sending requests");
+            scheduledTask = taskScheduler.scheduleAtFixedRate(
+                    this::sendRequest,
+                    Duration.ofMillis(intervalMs)
+            );
+        }
+    }
+
+    public void stopSending() {
+        if (scheduledTask != null && !scheduledTask.isCancelled()) {
+            log.info("stop sending requests");
+            scheduledTask.cancel(false);
+        }
+    }
+
+    public void sendRequest() {
         var t = Thread.currentThread();
         log.info("tick on {} (id={}, virtual={})", t.getName(), t.threadId(), t.isVirtual());
 

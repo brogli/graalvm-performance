@@ -19,5 +19,5 @@ spec:
       env:
         - name: SERVER_PORT
           value: "8081"
-        - name: RECEIVER_URL
+        - name: APP_RECEIVER_URL
           value: "http://receiver:8082"

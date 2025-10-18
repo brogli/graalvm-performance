@@ -1,5 +1,6 @@
 package ch.brogli.graalvmperformance.sender;
 
+import ch.brogli.graalvmperformance.common.ItemsPerSecondMovingAverage;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.stereotype.Service;
@@ -14,11 +15,12 @@ public class RequestSender {
     private final PingClient pingClient;
     private final TaskScheduler taskScheduler;
     private ScheduledFuture<?> scheduledTask;
+    private final ItemsPerSecondMovingAverage requestsSent;
 
     public RequestSender(PingClient pingClient, TaskScheduler taskScheduler) {
         this.pingClient = pingClient;
         this.taskScheduler = taskScheduler;
-
+        this.requestsSent = new ItemsPerSecondMovingAverage(5);
     }
 
     public void startSending(int intervalMs) {

@@ -1,5 +1,6 @@
 package ch.brogli.graalvmperformance.receiver;
 
+import ch.brogli.graalvmperformance.common.ItemsPerSecondMovingAverage;
 import io.micrometer.core.instrument.Gauge;
 import io.micrometer.core.instrument.MeterRegistry;
 import org.springframework.stereotype.Service;

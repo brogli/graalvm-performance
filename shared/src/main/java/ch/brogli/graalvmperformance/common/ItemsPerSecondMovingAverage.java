@@ -1,4 +1,4 @@
-package ch.brogli.graalvmperformance.receiver;
+package ch.brogli.graalvmperformance.common;
 
 import lombok.extern.slf4j.Slf4j;
 

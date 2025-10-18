@@ -2,9 +2,10 @@
 import LineChart from "@/LineChart.vue";
 import Button from 'primevue/button';
 import {ref} from "vue";
-import InputText from 'primevue/inputtext';
+import InputNumber from 'primevue/inputnumber';
+import FloatLabel from 'primevue/floatlabel';
 
-const fixedRateMs = ref<string>("100");
+const fixedRateMs = ref<number>(100);
 
 async function startSending(): Promise<void> {
   const url = "http://localhost:8081/start";
@@ -14,7 +15,7 @@ async function startSending(): Promise<void> {
     headers: {
       "Content-Type": "application/json"
     },
-    body: JSON.stringify({ intervalMs: parseInt(fixedRateMs.value) }),
+    body: JSON.stringify({ intervalMs: fixedRateMs.value }),
   }
 
   try {
@@ -51,7 +52,11 @@ async function stopSending(): Promise<void> {
 <template>
 <main class="flex flex-col">
   <section class="flex gap-4">
-    <InputText type="text" v-model="fixedRateMs" />
+
+    <FloatLabel variant="in">
+      <InputNumber v-model="fixedRateMs" inputId="integeronly" id="fixedRateMs" />
+      <label for="fixedRateMs">ms between Requests</label>
+    </FloatLabel>
     <Button label="Start Requests" @click="startSending" />
     <Button label="Stop Requests" @click="stopSending" ></Button>
 

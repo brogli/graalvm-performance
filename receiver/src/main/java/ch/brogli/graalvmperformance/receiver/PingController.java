@@ -1,22 +1,21 @@
 package ch.brogli.graalvmperformance.receiver;
 
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class PingController {
 
-    private final PingService pingService;
+    private final RequestReceiverService requestReceiverService;
 
-    public PingController(PingService pingService) {
+    public PingController(RequestReceiverService requestReceiverService) {
 
-        this.pingService = pingService;
+        this.requestReceiverService = requestReceiverService;
     }
 
     @GetMapping("/ping")
     public int ping() {
-        return pingService.getPing();
+        return requestReceiverService.getPing();
 
     }
 

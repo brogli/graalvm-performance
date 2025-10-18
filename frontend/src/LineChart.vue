@@ -31,7 +31,6 @@ const chartOptions = ref();
 const requestsPerSecondData = ref<number[]>([]);
 const labels = ref<string[]>([]);
 
-// TODO: poll metrics (e.g. req per second), start stop form with req/s as param
 
 const setChartData = () => {
   const documentStyle = getComputedStyle(document.documentElement);

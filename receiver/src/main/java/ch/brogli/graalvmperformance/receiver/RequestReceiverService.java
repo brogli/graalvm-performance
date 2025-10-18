@@ -8,26 +8,25 @@ import java.util.Random;
 import java.util.function.Supplier;
 
 @Service
-public class PingService {
+public class RequestReceiverService {
 
     private final MeterRegistry meterRegistry;
-    private final RequestPerSecondCalculator requestPerSecondCalculator;
+    private final ItemsPerSecondMovingAverage requestsPerSecondMovingAverage;
 
-
-    public PingService(MeterRegistry meterRegistry, RequestPerSecondCalculator requestPerSecondCalculator) {
+    public RequestReceiverService(MeterRegistry meterRegistry) {
         this.meterRegistry = meterRegistry;
-        this.requestPerSecondCalculator = requestPerSecondCalculator;
+        this.requestsPerSecondMovingAverage = new ItemsPerSecondMovingAverage(5);
         Gauge.builder("api_requests_per_second", getRequestsPerSecond())
                 .description("Requests per Second")
                 .register(meterRegistry);
     }
 
     public int getPing() {
-        requestPerSecondCalculator.recordRequest();
+        requestsPerSecondMovingAverage.recordTime();
         return new Random().nextInt(1000);
     }
 
     private Supplier<Double> getRequestsPerSecond() {
-        return requestPerSecondCalculator::getRequestsPerSecond;
+        return requestsPerSecondMovingAverage::getRecordingsPerSecond;
     }
 }

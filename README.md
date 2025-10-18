@@ -14,8 +14,12 @@
 ## Run pods
 
 ```bash
-podman play kube .k8s/receiver.yaml
-podman play kube .k8s/sender.yaml
+podman network create demo-network
+```
+
+```bash
+podman play kube --network demo-network .k8s/receiver.yaml
+podman play kube --network demo-network .k8s/sender.yaml
 ```
 
 ## Check pods

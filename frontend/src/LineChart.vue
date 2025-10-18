@@ -1,10 +1,25 @@
 <script setup lang="ts">
 
 import Chart from "primevue/chart";
-import {onMounted, onUnmounted, ref} from "vue";
+import {onMounted, onUnmounted, type Ref, ref} from "vue";
 import {useIntervalFn} from '@vueuse/core'
 import Button from "primevue/button";
 
+const props = withDefaults(defineProps<{
+  useSecondLine?: boolean
+  useThirdLine?: boolean
+  url0: string,
+  url1?: string,
+  url2?: string
+  title0: string,
+  title1?: string,
+  title2?: string
+  valueConverter?: (value: number) => number;
+}>(),
+  {
+    valueConverter: (value: number) => value
+  }
+)
 
 onMounted(() => {
   chartData.value = setChartData();
@@ -14,12 +29,17 @@ onMounted(() => {
 
 
 const {pause, resume, isActive} = useIntervalFn(() => {
-  fetchData()
+  fetchData(data0, props.url0);
+  if (props.useSecondLine && props.url1) {
+    fetchData(data1, props.url1)
+  }
+  if (props.useThirdLine && props.url2) {
+    fetchData(data2, props.url2)
+  }
 }, 1000)
 
 
 function stopUpdatingMetrics(): void {
-
   if (isActive) {
     pause();
   }
@@ -28,32 +48,50 @@ function stopUpdatingMetrics(): void {
 
 const chartData = ref();
 const chartOptions = ref();
-const requestsPerSecondData = ref<number[]>([]);
+const data0 = ref<number[]>([]);
+const data1 = ref<number[]>([]);
+const data2 = ref<number[]>([]);
 const labels = ref<string[]>([]);
 
 
 const setChartData = () => {
   const documentStyle = getComputedStyle(document.documentElement);
 
+  const dataset0 = {
+    label: props.title0,
+    data: data0,
+    fill: false,
+    borderColor: documentStyle.getPropertyValue('--p-cyan-500'),
+    tension: 0.4
+  };
+
+  const dataset1 = {
+      label: props.title1 || "",
+      data: data1,
+      fill: false,
+      borderColor: documentStyle.getPropertyValue('--p-gray-500'),
+      tension: 0.4
+  }
+
+  const dataset2 = {
+      label: props.title2 || "",
+      data: data2,
+      fill: false,
+      borderColor: documentStyle.getPropertyValue('--p-red-500'),
+      tension: 0.4
+  }
+
+  const datasets = [dataset0]
+  if (props.useSecondLine) {
+    datasets.push(dataset1)
+  }
+  if (props.useThirdLine) {
+    datasets.push(dataset2)
+  }
 
   return {
     labels: labels,
-    datasets: [
-      {
-        label: 'First Dataset',
-        data: requestsPerSecondData,
-        fill: false,
-        borderColor: documentStyle.getPropertyValue('--p-cyan-500'),
-        tension: 0.4
-      },
-      // {
-      //   label: 'Second Dataset',
-      //   data: [28, 48, 40, 19, 86, 27, 90],
-      //   fill: false,
-      //   borderColor: documentStyle.getPropertyValue('--p-gray-500'),
-      //   tension: 0.4
-      // }
-    ]
+    datasets: datasets
   };
 };
 const setChartOptions = () => {
@@ -93,8 +131,7 @@ const setChartOptions = () => {
   };
 }
 
-async function fetchData(): Promise<void> {
-  const url = "http://localhost:8082/actuator/metrics/api_requests_per_second";
+async function fetchData(data: Ref<number[]>, url: string): Promise<void> {
   try {
     const response = await fetch(url);
     if (!response.ok) {
@@ -102,8 +139,8 @@ async function fetchData(): Promise<void> {
     }
 
     const result = await response.json();
-    const resultValue = result.measurements[0].value;
-    const newData = [...requestsPerSecondData.value, resultValue];
+    const resultValue = props.valueConverter(result.measurements[0].value);
+    const newData = [...data.value, resultValue];
     if (newData.length > 20) {
       newData.shift();
     }
@@ -113,7 +150,7 @@ async function fetchData(): Promise<void> {
       const secondsAgo = arr.length - 1 - index;
       return secondsAgo === 0 ? 'now' : `-${secondsAgo}s`;
     });
-    requestsPerSecondData.value = newData;
+    data.value = newData;
 
   } catch (error) {
     console.error('Error fetching data:', error instanceof Error ? error.message : 'Unknown error');
@@ -127,11 +164,11 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <section class="card">
-    <Chart type="line" :data="chartData" :options="chartOptions" class="h-[30rem]"/>
+  <section class="flex flex-col h-[20rem]">
+    <Chart type="line" :data="chartData" :options="chartOptions" class="flex grow"/>
     <div class="gap-4 flex">
-      <Button label="Stop Updating Metrics" @click="pause()" ></Button>
       <Button label="Start Updating Metrics" @click="resume()" ></Button>
+      <Button label="Stop Updating Metrics" @click="pause()" ></Button>
     </div>
   </section>
 </template>

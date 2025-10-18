@@ -15,7 +15,7 @@ async function startSending(): Promise<void> {
     headers: {
       "Content-Type": "application/json"
     },
-    body: JSON.stringify({ intervalMs: fixedRateMs.value }),
+    body: JSON.stringify({intervalMs: fixedRateMs.value}),
   }
 
   try {
@@ -50,20 +50,34 @@ async function stopSending(): Promise<void> {
 </script>
 
 <template>
-<main class="flex flex-col">
-  <section class="flex gap-4">
+  <main class="flex flex-col gap-4">
+    <section class="flex gap-4">
 
-    <FloatLabel variant="in">
-      <InputNumber v-model="fixedRateMs" inputId="integeronly" id="fixedRateMs" />
-      <label for="fixedRateMs">ms between Requests</label>
-    </FloatLabel>
-    <Button label="Start Requests" @click="startSending" />
-    <Button label="Stop Requests" @click="stopSending" ></Button>
+      <FloatLabel variant="in">
+        <InputNumber v-model="fixedRateMs" inputId="integeronly" id="fixedRateMs"/>
+        <label for="fixedRateMs">ms between Requests</label>
+      </FloatLabel>
+      <Button label="Start Requests" @click="startSending"/>
+      <Button label="Stop Requests" @click="stopSending"></Button>
 
 
-  </section>
-  <LineChart/>
-</main>
+    </section>
+    <div class="flex gap-4">
+    <section class="flex gap-4 flex-col">
+      <h1>Sender</h1>
+      <LineChart url0="http://localhost:8082/actuator/metrics/api_requests_per_second" title0="Requests received per Second"/>
+      <LineChart url0="http://localhost:8082/actuator/metrics/api_requests_per_second" title0="Requests received per Second"/>
+    </section>
+    <section class="flex gap-4 flex-col">
+      <h1>Receiver</h1>
+      <LineChart url0="http://localhost:8082/actuator/metrics/api_requests_per_second" title0="Requests received per Second"/>
+      <LineChart url0="http://localhost:8082/actuator/metrics/jvm.memory.used" title0="jvm memory used, Mb"
+                 url1="http://localhost:8082/actuator/metrics/jvm.memory.committed" title1="jvm memory committed, Mb"
+                 url2="http://localhost:8082/actuator/metrics/jvm.memory.max" title2="jvm memory max, Mb"
+                 :use-second-line="true" :useThirdLine="true" :value-converter="(e) => e/1000000"/>
+    </section>
+    </div>
+  </main>
 </template>
 
 <style scoped></style>

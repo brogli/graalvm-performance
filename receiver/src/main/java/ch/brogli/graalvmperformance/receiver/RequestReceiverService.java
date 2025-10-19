@@ -17,14 +17,16 @@ public class RequestReceiverService {
     public RequestReceiverService(MeterRegistry meterRegistry) {
         this.meterRegistry = meterRegistry;
         this.requestsPerSecondMovingAverage = new ItemsPerSecondMovingAverage(5);
-        Gauge.builder("api_requests_per_second", getRequestsPerSecond())
+        Gauge.builder("receiver_requests_per_second", getRequestsPerSecond())
                 .description("Requests per Second")
                 .register(meterRegistry);
     }
 
-    public int getPing() {
+    public int getPing() throws InterruptedException {
         requestsPerSecondMovingAverage.recordTime();
-        return new Random().nextInt(1000);
+        var randomNumber = new Random().nextInt(1000);
+        Thread.sleep(randomNumber);
+        return randomNumber;
     }
 
     private Supplier<Double> getRequestsPerSecond() {

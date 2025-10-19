@@ -14,9 +14,8 @@ public class PingController {
     }
 
     @GetMapping("/ping")
-    public int ping() {
+    public int ping() throws InterruptedException {
         return requestReceiverService.getPing();
-
     }
 
     @GetMapping("/threadname")

@@ -7,9 +7,9 @@ import org.springframework.web.bind.annotation.*;
 @CrossOrigin(origins = "*")
 public class RequestSenderController {
 
-    private final RequestSender sender;
+    private final RequestSenderService sender;
 
-    public RequestSenderController(RequestSender sender) {
+    public RequestSenderController(RequestSenderService sender) {
         this.sender = sender;
     }
     public record StartRequest(int intervalMs) {}

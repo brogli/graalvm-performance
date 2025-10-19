@@ -24,7 +24,7 @@ public class ItemsPerSecondMovingAverage {
         while (!timestamps.isEmpty() && timestamps.peekFirst() < cutoffNanos) {
             timestamps.pollFirst();
         }
-        log.info("Pruned old entries. Remaining: {}", timestamps.size());
+        log.debug("Pruned old entries. Remaining: {}", timestamps.size());
 
         timestamps.addLast(now);
     }

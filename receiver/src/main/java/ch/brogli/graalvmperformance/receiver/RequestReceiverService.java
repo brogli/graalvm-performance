@@ -5,6 +5,8 @@ import io.micrometer.core.instrument.Gauge;
 import io.micrometer.core.instrument.MeterRegistry;
 import org.springframework.stereotype.Service;
 
+import java.lang.management.ManagementFactory;
+import java.lang.management.MemoryMXBean;
 import java.util.Random;
 import java.util.function.Supplier;
 
@@ -13,12 +15,22 @@ public class RequestReceiverService {
 
     private final MeterRegistry meterRegistry;
     private final ItemsPerSecondMovingAverage requestsPerSecondMovingAverage;
+    private final MemoryMXBean memoryBean;
 
     public RequestReceiverService(MeterRegistry meterRegistry) {
         this.meterRegistry = meterRegistry;
         this.requestsPerSecondMovingAverage = new ItemsPerSecondMovingAverage(5);
+        this.memoryBean = ManagementFactory.getMemoryMXBean();
         Gauge.builder("receiver_requests_per_second", getRequestsPerSecond())
                 .description("Requests per Second")
+                .register(meterRegistry);
+
+        Gauge.builder("receiver_memory_mx_used", getMemoryMxUsed())
+                .description("MemoryMx Used")
+                .register(meterRegistry);
+
+        Gauge.builder("receiver_memory_mx_committed", getMemoryMxCommitted())
+                .description("MemoryMx Committed")
                 .register(meterRegistry);
     }
 
@@ -31,5 +43,13 @@ public class RequestReceiverService {
 
     private Supplier<Double> getRequestsPerSecond() {
         return requestsPerSecondMovingAverage::getRecordingsPerSecond;
+    }
+
+    private Supplier<Long> getMemoryMxUsed() {
+        return () -> memoryBean.getHeapMemoryUsage().getUsed() + memoryBean.getNonHeapMemoryUsage().getUsed();
+    }
+
+    private Supplier<Long> getMemoryMxCommitted() {
+        return () -> memoryBean.getHeapMemoryUsage().getCommitted() + memoryBean.getNonHeapMemoryUsage().getCommitted();
     }
 }

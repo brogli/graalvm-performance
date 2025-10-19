@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.Duration;
 import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 
 @Service
@@ -36,12 +37,14 @@ public class RequestSenderService {
                 .register(meterRegistry);
     }
 
-    public void startSending(int intervalMs) {
+    public void startSending(int targetRequestsPerSecond) {
         if (scheduledTask == null || scheduledTask.isCancelled()) {
             log.info("start sending requests");
+            double intervalMs = (double) 1000 / (targetRequestsPerSecond);
+            long intervalNanos = (long) (intervalMs * 1_000_000);
             scheduledTask = taskScheduler.scheduleAtFixedRate(
                     this::sendRequest,
-                    Duration.ofMillis(intervalMs)
+                    Duration.ofNanos(intervalNanos)
             );
         }
     }

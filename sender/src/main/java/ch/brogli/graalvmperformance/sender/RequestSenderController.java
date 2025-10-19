@@ -12,12 +12,12 @@ public class RequestSenderController {
     public RequestSenderController(RequestSenderService sender) {
         this.sender = sender;
     }
-    public record StartRequest(int intervalMs) {}
+    public record StartRequest(int targetRequestsPerSecond) {}
 
     @PostMapping("/start")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void start(@RequestBody StartRequest request) {
-        sender.startSending(request.intervalMs());
+        sender.startSending(request.targetRequestsPerSecond());
     }
 
     @PostMapping("/stop")

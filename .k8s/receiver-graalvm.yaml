@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: receiver-pod-graalvm
+  labels:
+    app: receiver
+spec:
+  containers:
+    - name: receiver
+      image: docker.io/graalvm-performance/receiver-graalvm:latest
+      ports:
+        - containerPort: 8082
+          hostPort: 8082
+      resources:
+        limits:
+          memory: "768Mi"
+        requests:
+          memory: "512Mi"
+      env:
+        - name: SERVER_PORT
+          value: "8082"

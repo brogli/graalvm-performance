@@ -4,6 +4,12 @@ spring:
   threads:
     virtual:
       enabled: true
+  cloud:
+    openfeign:
+      client:
+        config:
+          pingClient:
+            url: ${APP_RECEIVER_URL:http://localhost:8082}
 
 server:
   port: 8081
@@ -17,6 +23,3 @@ management:
       exposure:
         include: "health,info,prometheus,metrics"
 
-app:
-  receiver:
-    url: "http://localhost:8082"

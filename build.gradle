@@ -84,7 +84,7 @@ subprojects {
             container {
                 // graalvm: remove jvmFlags
                 jvmFlags = [
-                        '-XX:MaxRAMPercentage=75.0',
+                        '-XX:MaxRAMPercentage=80.0',
                         '-XX:InitialRAMPercentage=50.0'
                 ]
                 ports = [project.name == 'sender' ? '8081' : '8082']

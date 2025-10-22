@@ -1,15 +1,17 @@
 package ch.brogli.graalvmperformance.sender;
 
 import ch.brogli.graalvmperformance.common.ItemsPerSecondMovingAverage;
+import com.sun.management.OperatingSystemMXBean;
 import io.micrometer.core.instrument.Gauge;
 import io.micrometer.core.instrument.MeterRegistry;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.stereotype.Service;
 
+import java.lang.management.ManagementFactory;
+import java.lang.management.MemoryMXBean;
 import java.time.Duration;
 import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 
 @Service
@@ -22,6 +24,10 @@ public class RequestSenderService {
     private ScheduledFuture<?> scheduledTask;
     private final ItemsPerSecondMovingAverage requestsSent;
     private final ItemsPerSecondMovingAverage responsesReceived;
+    private final ItemsPerSecondMovingAverage exceptionsCaught;
+    private final MemoryMXBean memoryMxBean;
+    private final OperatingSystemMXBean osBean;
+
 
     public RequestSenderService(PingClient pingClient, TaskScheduler taskScheduler, MeterRegistry meterRegistry) {
         this.pingClient = pingClient;
@@ -29,11 +35,33 @@ public class RequestSenderService {
         this.meterRegistry = meterRegistry;
         this.requestsSent = new ItemsPerSecondMovingAverage(5);
         this.responsesReceived = new ItemsPerSecondMovingAverage(5);
+        this.exceptionsCaught = new ItemsPerSecondMovingAverage(5);
+        this.memoryMxBean = ManagementFactory.getMemoryMXBean();
+
+        this.osBean = ManagementFactory.getPlatformMXBean(
+                OperatingSystemMXBean.class
+        );
         Gauge.builder("sender_requests_sent_per_second", getRequestsSentPerSecond())
                 .description("Requests per Second")
                 .register(meterRegistry);
         Gauge.builder("sender_responses_received_per_second", getResponsesReceivedPerSecond())
                 .description("Responses per Second")
+                .register(meterRegistry);
+        Gauge.builder("sender_exceptions_caught_per_second", getExceptionsCaughtPerSecond())
+                .description("Responses per Second")
+                .register(meterRegistry);
+
+
+        Gauge.builder("receiver_memory_mx_used", getMemoryMxUsed())
+                .description("MemoryMx Used")
+                .register(meterRegistry);
+
+        Gauge.builder("receiver_memory_mx_committed", getMemoryMxCommitted())
+                .description("MemoryMx Committed")
+                .register(meterRegistry);
+
+        Gauge.builder("receiver_total_memory_size", getTotalMemorySize())
+                .description("MemoryMx Committed")
                 .register(meterRegistry);
     }
 
@@ -67,6 +95,7 @@ public class RequestSenderService {
                 responsesReceived.recordTime();
             }
         } catch (Exception e) {
+            exceptionsCaught.recordTime();
             log.error("request failed", e);
         }
     }
@@ -77,5 +106,21 @@ public class RequestSenderService {
 
     private Supplier<Double> getResponsesReceivedPerSecond() {
         return responsesReceived::getRecordingsPerSecond;
+    }
+
+    private Supplier<Double> getExceptionsCaughtPerSecond() {
+        return exceptionsCaught::getRecordingsPerSecond;
+    }
+
+    private Supplier<Long> getMemoryMxUsed() {
+        return () -> memoryMxBean.getHeapMemoryUsage().getUsed() + memoryMxBean.getNonHeapMemoryUsage().getUsed();
+    }
+
+    private Supplier<Long> getTotalMemorySize() {
+        return osBean::getTotalMemorySize;
+    }
+
+    private Supplier<Long> getMemoryMxCommitted() {
+        return () -> memoryMxBean.getHeapMemoryUsage().getCommitted() + memoryMxBean.getNonHeapMemoryUsage().getCommitted();
     }
 }

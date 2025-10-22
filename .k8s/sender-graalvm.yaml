@@ -13,9 +13,9 @@ spec:
           hostPort: 8081
       resources:
         limits:
-          memory: "768Mi"
+          memory: "64Mi"
         requests:
-          memory: "512Mi"
+          memory: "32Mi"
       env:
         - name: SERVER_PORT
           value: "8081"

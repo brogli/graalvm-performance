@@ -1,7 +1,7 @@
 <script setup lang="ts">
 
 import Chart from "primevue/chart";
-import {onMounted, onUnmounted, type Ref, ref} from "vue";
+import {onMounted, onUnmounted, type Ref, ref, watch} from "vue";
 import {useIntervalFn} from '@vueuse/core'
 import Button from "primevue/button";
 
@@ -15,11 +15,20 @@ const props = withDefaults(defineProps<{
   title1?: string,
   title2?: string
   valueConverter?: (value: number) => number;
+  shouldPollMetrics: boolean
 }>(),
   {
     valueConverter: (value: number) => value
   }
 )
+
+watch(() => props.shouldPollMetrics, (value) => {
+  if (value) {
+    resume()
+  } else {
+    pause()
+  }
+} )
 
 onMounted(() => {
   chartData.value = setChartData();

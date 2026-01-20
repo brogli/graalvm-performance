@@ -105,8 +105,8 @@ GraalVM-receiver: 133 MB
 JVM-sender: 2.265s
 JVM-receiver: 2.135s
 
-GraalVM-sender: 0.249 s
-GraalVM-receiver: 0.246
+GraalVM-sender: 0.249s
+GraalVM-receiver: 0.246s
 
 ### Memory consumption of pod
 

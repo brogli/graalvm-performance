@@ -7,6 +7,7 @@ import FloatLabel from 'primevue/floatlabel';
 import GeneralMetric from "@/GeneralMetric.vue";
 
 const targetRequestsPerSecond = ref<number>(10);
+const shouldPollMetrics = ref<boolean>(false);
 
 async function startSending(): Promise<void> {
   const url = "http://localhost:8081/start";
@@ -60,6 +61,8 @@ async function stopSending(): Promise<void> {
       </FloatLabel>
       <Button label="Start Requests" @click="startSending"/>
       <Button label="Stop Requests" @click="stopSending"></Button>
+      <Button label="Start Polling Metrics" @click="shouldPollMetrics = true"></Button>
+      <Button label="Stop Polling Metrics" @click="shouldPollMetrics = false"></Button>
 
 
     </section>
@@ -75,19 +78,26 @@ async function stopSending(): Promise<void> {
           <li>
             <GeneralMetric url="http://localhost:8081/actuator/metrics/application.ready.time"
                            label="application.ready.time, seconds"
-                           />
+            />
           </li>
         </ul>
-        <LineChart url0="http://localhost:8081/actuator/metrics/sender_requests_sent_per_second"
+        <LineChart :shouldPollMetrics="shouldPollMetrics"
+                   url0="http://localhost:8081/actuator/metrics/sender_requests_sent_per_second"
                    title0="Requests sent per Second"
-                    url1="http://localhost:8081/actuator/metrics/sender_responses_received_per_second"
-                  title1="Responses received per second"
-        :use-second-line="true" />
-        <LineChart url0="http://localhost:8081/actuator/metrics/jvm.memory.used"
-                   title0="jvm memory used, MB"
-                   url1="http://localhost:8081/actuator/metrics/jvm.memory.committed"
-                   title1="jvm memory committed, MB"
-                   :use-second-line="true" :value-converter="(e) => e/1000000"/>
+                   url1="http://localhost:8081/actuator/metrics/sender_responses_received_per_second"
+                   title1="Responses received per second"
+                   url2="http://localhost:8081/actuator/metrics/sender_exceptions_caught_per_second"
+                   title2="Exceptions caught"
+                   :use-second-line="true" :use-third-line="true"/>
+        <LineChart :shouldPollMetrics="shouldPollMetrics"
+                   url0="http://localhost:8081/actuator/metrics/receiver_memory_mx_used"
+                   title0="memory used, MB"
+                   url1="http://localhost:8081/actuator/metrics/receiver_memory_mx_committed"
+                   title1="memory committed, MB"
+                   url2="http://localhost:8081/actuator/metrics/receiver_total_memory_size"
+                   title2="total memory size"
+                   :use-second-line="true" :use-third-line="true"
+                   :value-converter="(e) => e/1000000"/>
       </section>
       <section class="flex gap-4 flex-col">
         <h1>Receiver</h1>
@@ -103,18 +113,17 @@ async function stopSending(): Promise<void> {
             />
           </li>
         </ul>
-        <LineChart url0="http://localhost:8082/actuator/metrics/receiver_requests_per_second"
+        <LineChart :shouldPollMetrics="shouldPollMetrics"
+                   url0="http://localhost:8082/actuator/metrics/receiver_requests_per_second"
                    title0="Requests received per Second"/>
-        <LineChart url0="http://localhost:8082/actuator/metrics/jvm.memory.used"
-                   title0="jvm memory used, MB"
-                   url1="http://localhost:8082/actuator/metrics/jvm.memory.committed"
-                   title1="jvm memory committed, MB"
-                   :use-second-line="true" :value-converter="(e) => e/1000000"/>
-        <LineChart url0="http://localhost:8082/actuator/metrics/receiver_memory_mx_used"
-                   title0="jvm memory used, MB"
+        <LineChart :shouldPollMetrics="shouldPollMetrics"
+                   url0="http://localhost:8082/actuator/metrics/receiver_memory_mx_used"
+                   title0="memory used, MB"
                    url1="http://localhost:8082/actuator/metrics/receiver_memory_mx_committed"
-                   title1="jvm memory committed, MB"
-                   :use-second-line="true" :value-converter="(e) => e/1000000"/>
+                   title1="memory committed, MB"
+                   url2="http://localhost:8081/actuator/metrics/receiver_total_memory_size"
+                   title2="total memory size"
+                   :use-second-line="true" :use-third-line="true" :value-converter="(e) => e/1000000"/>
       </section>
     </div>
   </main>

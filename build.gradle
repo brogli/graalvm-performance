@@ -1,3 +1,5 @@
+import org.springframework.boot.gradle.tasks.bundling.BootBuildImage
+
 plugins {
     id 'java'
     id 'org.springframework.boot' version '3.5.6' apply false
@@ -43,6 +45,8 @@ subprojects {
         }
     }
 
+
+
     // Apply Spring Boot and dependency management to Spring Boot app modules
     if (project.name in ['sender', 'receiver']) {
         apply plugin: 'org.springframework.boot'
@@ -71,6 +75,13 @@ subprojects {
 
         tasks.named('test') {
             useJUnitPlatform()
+        }
+
+        tasks.named("bootBuildImage", BootBuildImage) {
+            docker {
+                host = "unix://${System.getenv('XDG_RUNTIME_DIR')}/podman/podman.sock"
+                bindHostToBuilder = true
+            }
         }
 
         jib {

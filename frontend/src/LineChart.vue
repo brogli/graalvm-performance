@@ -3,20 +3,19 @@
 import Chart from "primevue/chart";
 import {onMounted, onUnmounted, type Ref, ref, watch} from "vue";
 import {useIntervalFn} from '@vueuse/core'
-import Button from "primevue/button";
 
 const props = withDefaults(defineProps<{
-  useSecondLine?: boolean
-  useThirdLine?: boolean
-  url0: string,
-  url1?: string,
-  url2?: string
-  title0: string,
-  title1?: string,
-  title2?: string
-  valueConverter?: (value: number) => number;
-  shouldPollMetrics: boolean
-}>(),
+    useSecondLine?: boolean
+    useThirdLine?: boolean
+    url0: string,
+    url1?: string,
+    url2?: string
+    title0: string,
+    title1?: string,
+    title2?: string
+    valueConverter?: (value: number) => number;
+    shouldPollMetrics: boolean
+  }>(),
   {
     valueConverter: (value: number) => value
   }
@@ -28,7 +27,7 @@ watch(() => props.shouldPollMetrics, (value) => {
   } else {
     pause()
   }
-} )
+})
 
 onMounted(() => {
   chartData.value = setChartData();
@@ -75,19 +74,19 @@ const setChartData = () => {
   };
 
   const dataset1 = {
-      label: props.title1 || "",
-      data: data1,
-      fill: false,
-      borderColor: documentStyle.getPropertyValue('--p-gray-500'),
-      tension: 0.4
+    label: props.title1 || "",
+    data: data1,
+    fill: false,
+    borderColor: documentStyle.getPropertyValue('--p-gray-500'),
+    tension: 0.4
   }
 
   const dataset2 = {
-      label: props.title2 || "",
-      data: data2,
-      fill: false,
-      borderColor: documentStyle.getPropertyValue('--p-red-500'),
-      tension: 0.4
+    label: props.title2 || "",
+    data: data2,
+    fill: false,
+    borderColor: documentStyle.getPropertyValue('--p-red-500'),
+    tension: 0.4
   }
 
   const datasets = [dataset0]
@@ -112,6 +111,7 @@ const setChartOptions = () => {
   return {
     maintainAspectRatio: false,
     aspectRatio: 0.6,
+    animation: false,
     plugins: {
       legend: {
         labels: {
@@ -175,10 +175,6 @@ onUnmounted(() => {
 <template>
   <section class="flex flex-col h-[20rem]">
     <Chart type="line" :data="chartData" :options="chartOptions" class="flex grow"/>
-    <div class="gap-4 flex">
-      <Button label="Start Updating Metrics" @click="resume()" ></Button>
-      <Button label="Stop Updating Metrics" @click="pause()" ></Button>
-    </div>
   </section>
 </template>
 

@@ -110,7 +110,7 @@ GraalVM-receiver: 0.246s
 
 ### Memory consumption of pod
 
-GraalVM: ca. 64Mib for ca. 150 requests per second
+GraalVM: ca. 64Mib for ca. 200 requests per second
 JVM: ca. 128Mib for ca. 150 requests per second
 
 ## Info for trying non-containerized native builds

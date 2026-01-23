@@ -54,7 +54,6 @@ async function stopSending(): Promise<void> {
 <template>
   <main class="flex flex-col gap-4">
     <section class="flex gap-4">
-
       <FloatLabel variant="in">
         <InputNumber v-model="targetRequestsPerSecond" inputId="integeronly" id="fixedRateMs"/>
         <label for="fixedRateMs">Target requests per second</label>
@@ -63,8 +62,6 @@ async function stopSending(): Promise<void> {
       <Button label="Stop Requests" @click="stopSending"></Button>
       <Button label="Start Polling Metrics" @click="shouldPollMetrics = true"></Button>
       <Button label="Stop Polling Metrics" @click="shouldPollMetrics = false"></Button>
-
-
     </section>
     <div class="flex gap-4">
       <section class="flex gap-4 flex-col">

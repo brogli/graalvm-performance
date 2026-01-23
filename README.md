@@ -1,4 +1,12 @@
+# GraalVM Experiment
+
+This is a small experiment I did to get a feel for GraalVM and how it compares to JVM, if both are run in OCI container.
+The project contains 2 Java Spring Boot apps, a sender and a receiver. The sender sends x requests pers second to the
+receiver, the receiver replies. This can be controlled using the small VueJS dashboard.
+Read below to test it yourself.
+
 ## Prerequisites
+
 - installed podman
 - installed podman-docker
 - jdk 21
@@ -122,6 +130,7 @@ native-image --version
 ```
 
 ## Build natively
+
 ```bash
 ./gradlew nativeCompile
 ```
